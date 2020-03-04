@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -27,8 +28,8 @@ public class webView extends Application {
         WebEngine webEngine = webView.getEngine();
         webEngine.load(defaultURL);
 
-        Image reverseArrow = new Image(new FileInputStream("img/reverseArrow.png"), 20, 15, false, false);
-        Image star = new Image(new FileInputStream("img/favorites.png"), 20, 15, false, false);
+        Image reverseArrow = new Image(new FileInputStream("img/reverseArrow.png"), 20, 15, true, true);
+        Image star = new Image(new FileInputStream("img/favorites.png"), 20, 15, true,  true);
 
         Button previousPage = new Button();
         previousPage.setGraphic(new ImageView(reverseArrow));
@@ -41,9 +42,6 @@ public class webView extends Application {
 
         HBox topBar = new HBox();
         topBar.getChildren().addAll(previousPage, URL, favorites);
-
-//        HBox topBar = new HBox();
-//        topBar.getChildren().addAll(reverseArrow, previousPage, favorites);
 
         previousPage.setOnAction(e-> {
             webEngine.load(URLsVisited.get(pageCount-1));
@@ -61,9 +59,9 @@ public class webView extends Application {
         });
 
 
-        StackPane pane = new StackPane();
+        VBox pane = new VBox();
         pane.setAlignment(Pos.TOP_LEFT);
-        pane.getChildren().addAll(webView, topBar);
+        pane.getChildren().addAll(topBar, webView);
 
 
         Scene scene = new Scene(pane, 1000, 1000);

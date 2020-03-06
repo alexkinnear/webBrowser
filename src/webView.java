@@ -13,6 +13,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+
 import java.awt.*;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -41,19 +42,27 @@ public class webView extends Application {
         Button addTab = new Button();
         addTab.setGraphic(new ImageView(plusSign));
 
-        ComboBox current = new ComboBox();
+        TextField current = new TextField();
         current.setEditable(true);
-        current.setValue(URL.getText());
+        current.setPromptText("URL");
+        current.setText(URL.getText());
 
         // Displays the tabs above the URL
         HBox tabs = new HBox();
         tabs.getChildren().addAll(addTab, current);
 
-
         addTab.setOnAction(e -> {
-            ComboBox newTab = new ComboBox();
+            TextField newTab = new TextField();
             newTab.setEditable(true);
-            newTab.setValue("Hello");
+            newTab.setPromptText("URL");
+            newTab.setOnKeyPressed(ev -> {
+                if (ev.getCode() == KeyCode.ENTER) {
+                    URL.setText(newTab.getText());
+                    webEngine.load(URL.getText());
+                    URLsVisited.add(URL.getText());
+                    pageCount++;
+                }
+            });
             tabs.getChildren().add(newTab);
         });
 

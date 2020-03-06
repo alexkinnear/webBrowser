@@ -1,6 +1,4 @@
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,12 +8,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ public class webView extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         WebView webView = new WebView();
+        webView.setPrefHeight(screenSize.getHeight());
         final String defaultURL = "https://www.cs.usu.edu/";
         URLsVisited.add("https://www.cs.usu.edu/");
         WebEngine webEngine = webView.getEngine();
@@ -35,6 +34,7 @@ public class webView extends Application {
 
         Image reverseArrow = new Image(new FileInputStream("img/reverseArrow.png"), 20, 15, true, true);
         Image star = new Image(new FileInputStream("img/favorites.png"), 20, 15, true,  true);
+        Image goldStar = new Image(new FileInputStream("img/goldStar.png"), 20, 15, true, true);
 
         Button previousPage = new Button();
         previousPage.setGraphic(new ImageView(reverseArrow));
@@ -42,7 +42,8 @@ public class webView extends Application {
         Button favorites = new Button();
         favorites.setGraphic(new ImageView(star));
 
-        ComboBox<String> favSites = new ComboBox();
+        // Store favorite links
+        ComboBox favSites = new ComboBox();
 
         TextField URL = new TextField(defaultURL);
         URL.setPrefWidth(screenSize.getWidth() - previousPage.getWidth() - favorites.getWidth() - favSites.getWidth());
@@ -67,10 +68,17 @@ public class webView extends Application {
             }
         });
 
+        // Button
         favorites.setOnAction(e-> {
             if (!favSites.getItems().contains(URL.getText())) {
                 favSites.getItems().add(URL.getText());
             }
+        });
+
+        // Go site fav site when clicked on
+        favSites.setOnAction(e-> {
+            URL.setText((String) favSites.getValue());
+            webEngine.load((String) favSites.getValue());
         });
 
 

@@ -42,14 +42,22 @@ public class webView extends Application {
         Button addTab = new Button();
         addTab.setGraphic(new ImageView(plusSign));
 
-        TextField current = new TextField();
-        current.setEditable(true);
-        current.setPromptText("URL");
-        current.setText(URL.getText());
+        TextField firstTab = new TextField();
+        firstTab.setEditable(true);
+        firstTab.setPromptText("URL");
+        firstTab.setText(URL.getText());
+
+        firstTab.setOnMouseClicked(eve -> {
+            URL.setText(firstTab.getText());
+            webEngine.load(URL.getText());
+            URLsVisited.add(URL.getText());
+            pageCount++;
+        });
+        
 
         // Displays the tabs above the URL
         HBox tabs = new HBox();
-        tabs.getChildren().addAll(addTab, current);
+        tabs.getChildren().addAll(addTab, firstTab);
 
         addTab.setOnAction(e -> {
             TextField newTab = new TextField();
@@ -63,12 +71,19 @@ public class webView extends Application {
                     pageCount++;
                 }
             });
+            newTab.setOnMouseClicked(eve -> {
+                URL.setText(newTab.getText());
+                webEngine.load(URL.getText());
+                URLsVisited.add(URL.getText());
+                pageCount++;
+            });
             tabs.getChildren().add(newTab);
         });
 
         Image reverseArrow = new Image(new FileInputStream("img/reverseArrow.png"), 20, 15, true, true);
         Image star = new Image(new FileInputStream("img/favorites.png"), 20, 15, true,  true);
         Image goldStar = new Image(new FileInputStream("img/goldStar.png"), 20, 15, true, true);
+
 
         Button previousPage = new Button();
         previousPage.setGraphic(new ImageView(reverseArrow));
@@ -78,6 +93,16 @@ public class webView extends Application {
 
         // Store favorite links
         ComboBox favSites = new ComboBox();
+
+        // Listener to manage whether site should be marked as favorite (gold star) or not
+        URL.textProperty().addListener((ov, oldVal, newVal) -> {
+            if (favSites.getItems().contains(URL.getText())) {
+                favorites.setGraphic(new ImageView(goldStar));
+            }
+            else {
+                favorites.setGraphic(new ImageView(star));
+            }
+        });
 
         URL.setPrefWidth(screenSize.getWidth() - previousPage.getWidth() - favorites.getWidth() - favSites.getWidth());
 
@@ -90,12 +115,6 @@ public class webView extends Application {
             webEngine.load(URLsVisited.get(pageCount-1));
             URLsVisited.add(URLsVisited.get(pageCount-1));
             URL.setText(URLsVisited.get(pageCount-1));
-            if (favSites.getItems().contains(URLsVisited.get(pageCount-1))) {
-                favorites.setGraphic(new ImageView(goldStar));
-            }
-            else {
-                favorites.setGraphic(new ImageView(star));
-            }
         });
 
         // hit the enter key to go to the input website
@@ -104,12 +123,6 @@ public class webView extends Application {
                 webEngine.load(URL.getText());
                 URLsVisited.add(URL.getText());
                 pageCount++;
-                if (favSites.getItems().contains(URL.getText())) {
-                    favorites.setGraphic(new ImageView(goldStar));
-                }
-                else {
-                    favorites.setGraphic(new ImageView(star));
-                }
             }
         });
 
@@ -117,15 +130,14 @@ public class webView extends Application {
         favorites.setOnAction(e-> {
             if (!favSites.getItems().contains(URL.getText())) {
                 favSites.getItems().add(URL.getText());
+                favorites.setGraphic(new ImageView(goldStar));
             }
-            favorites.setGraphic(new ImageView(goldStar));
         });
 
         // Go site fav site when clicked on
         favSites.setOnAction(e-> {
             URL.setText((String) favSites.getValue());
             webEngine.load((String) favSites.getValue());
-            favorites.setGraphic(new ImageView(goldStar));
         });
 
 

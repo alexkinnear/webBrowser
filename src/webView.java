@@ -13,6 +13,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+import java.net.URL;
 
 import java.awt.*;
 import java.io.FileInputStream;
@@ -42,22 +43,10 @@ public class webView extends Application {
         Button addTab = new Button();
         addTab.setGraphic(new ImageView(plusSign));
 
-        TextField firstTab = new TextField();
-        firstTab.setEditable(true);
-        firstTab.setPromptText("URL");
-        firstTab.setText(URL.getText());
-
-        firstTab.setOnMouseClicked(eve -> {
-            URL.setText(firstTab.getText());
-            webEngine.load(URL.getText());
-            URLsVisited.add(URL.getText());
-            pageCount++;
-        });
         
-
         // Displays the tabs above the URL
         HBox tabs = new HBox();
-        tabs.getChildren().addAll(addTab, firstTab);
+        tabs.getChildren().addAll(addTab);
 
         addTab.setOnAction(e -> {
             TextField newTab = new TextField();
@@ -66,7 +55,10 @@ public class webView extends Application {
             newTab.setOnKeyPressed(ev -> {
                 if (ev.getCode() == KeyCode.ENTER) {
                     URL.setText(newTab.getText());
-                    webEngine.load(URL.getText());
+                    if (isValidURL(URL.getText()))
+                        webEngine.load(URL.getText());
+                    else
+                        webEngine.load("https://www.google.com/search?q=" + URL.getText());
                     URLsVisited.add(URL.getText());
                     pageCount++;
                 }
@@ -120,7 +112,12 @@ public class webView extends Application {
         // hit the enter key to go to the input website
         URL.setOnKeyPressed(e-> {
             if (e.getCode() == KeyCode.ENTER) {
-                webEngine.load(URL.getText());
+                // go to website
+                if (isValidURL(URL.getText()))
+                    webEngine.load(URL.getText());
+                // google result
+                else
+                    webEngine.load("https://www.google.com/search?q=" + URL.getText());
                 URLsVisited.add(URL.getText());
                 pageCount++;
             }
@@ -151,6 +148,16 @@ public class webView extends Application {
         stage.setTitle("Beehive Browser");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private boolean isValidURL(String url) {
+        try {
+            new URL(url).toURI();
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
 }

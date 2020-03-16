@@ -13,7 +13,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
-import java.net.URL;
 
 import java.awt.*;
 import java.io.FileInputStream;
@@ -43,7 +42,7 @@ public class webView extends Application {
         Button addTab = new Button();
         addTab.setGraphic(new ImageView(plusSign));
 
-        
+
         // Displays the tabs above the URL
         HBox tabs = new HBox();
         tabs.getChildren().addAll(addTab);
@@ -151,13 +150,7 @@ public class webView extends Application {
     }
 
     private boolean isValidURL(String url) {
-        try {
-            new URL(url).toURI();
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
+        return url.startsWith("https:");
     }
 
 }

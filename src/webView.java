@@ -15,8 +15,12 @@ import javafx.stage.Stage;
 
 
 import java.awt.*;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class webView extends Application {
@@ -29,6 +33,8 @@ public class webView extends Application {
 
     // current URL
     TextField URL = new TextField(defaultURL);
+
+
     @Override
     public void start(Stage stage) throws Exception {
         WebView webView = new WebView();
@@ -84,6 +90,10 @@ public class webView extends Application {
 
         // Store favorite links
         ComboBox favSites = new ComboBox();
+        Scanner scan = new Scanner(new File("data/favorites.txt"));
+        while (scan.hasNextLine()) {
+            favSites.getItems().add(scan.nextLine());
+        }
 
         // Listener to manage whether site should be marked as favorite (gold star) or not
         URL.textProperty().addListener((ov, oldVal, newVal) -> {
@@ -122,10 +132,25 @@ public class webView extends Application {
             }
         });
 
+
+
         // Button
         favorites.setOnAction(e-> {
             if (!favSites.getItems().contains(URL.getText())) {
                 favSites.getItems().add(URL.getText());
+                // Adds favorite sites to txt file
+                FileWriter fileWriter = null;
+                try {
+                    fileWriter = new FileWriter("data/favorites.txt", true);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                try {
+                    fileWriter.write(URL.getText()+"\n");
+                    fileWriter.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 favorites.setGraphic(new ImageView(goldStar));
             }
         });

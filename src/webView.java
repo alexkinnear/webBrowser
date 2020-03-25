@@ -1,8 +1,10 @@
 import javafx.application.Application;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -78,15 +80,15 @@ public class webView extends Application {
         });
 
         Image reverseArrow = new Image(new FileInputStream("img/reverseArrow.png"), 20, 15, true, true);
-        Image star = new Image(new FileInputStream("img/favorites.png"), 20, 15, true,  true);
-        Image goldStar = new Image(new FileInputStream("img/goldStar.png"), 20, 15, true, true);
+        Image hive = new Image(new FileInputStream("img/blankHive.png"), 20, 15, true,  true);
+        Image goldHive = new Image(new FileInputStream("img/honeyStick.png"), 20, 15, true, true);
 
 
         Button previousPage = new Button();
         previousPage.setGraphic(new ImageView(reverseArrow));
 
         Button favorites = new Button();
-        favorites.setGraphic(new ImageView(star));
+        favorites.setGraphic(new ImageView(hive));
 
         // Store favorite links
         ComboBox favSites = new ComboBox();
@@ -98,17 +100,28 @@ public class webView extends Application {
         // Listener to manage whether site should be marked as favorite (gold star) or not
         URL.textProperty().addListener((ov, oldVal, newVal) -> {
             if (favSites.getItems().contains(URL.getText())) {
-                favorites.setGraphic(new ImageView(goldStar));
+                favorites.setGraphic(new ImageView(goldHive));
             }
             else {
-                favorites.setGraphic(new ImageView(star));
+                favorites.setGraphic(new ImageView(hive));
             }
         });
 
-        URL.setPrefWidth(screenSize.getWidth() - previousPage.getWidth() - favorites.getWidth() - favSites.getWidth());
+
+        Spinner<Double> zoom = new Spinner<Double>(0.5, 5.0, 1.0);
+        zoom.increment(1);
+
+        zoom.valueProperty().addListener(ov -> {
+            webView.setZoom(zoom.getValue());
+        });
+
+
+
+        // set URL box to span the length of the screen
+        URL.setPrefWidth(screenSize.getWidth() - previousPage.getWidth() - favorites.getWidth() - favSites.getWidth() - zoom.getWidth());
 
         HBox topBar = new HBox();
-        topBar.getChildren().addAll(previousPage, URL, favorites, favSites);
+        topBar.getChildren().addAll(previousPage, URL, zoom, favorites, favSites);
         topBar.setAlignment(Pos.TOP_LEFT);
 
         // return to last website visited
@@ -134,7 +147,7 @@ public class webView extends Application {
 
 
 
-        // Button
+        // favorites button
         favorites.setOnAction(e-> {
             if (!favSites.getItems().contains(URL.getText())) {
                 favSites.getItems().add(URL.getText());
@@ -151,11 +164,11 @@ public class webView extends Application {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                favorites.setGraphic(new ImageView(goldStar));
+                favorites.setGraphic(new ImageView(goldHive));
             }
         });
 
-        // Go site fav site when clicked on
+        // Go to fav site when clicked on
         favSites.setOnAction(e-> {
             URL.setText((String) favSites.getValue());
             webEngine.load((String) favSites.getValue());

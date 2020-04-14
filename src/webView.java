@@ -1,6 +1,8 @@
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -14,13 +16,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -179,6 +179,8 @@ public class webView extends Application {
         pane.setAlignment(Pos.TOP_LEFT);
         pane.getChildren().addAll(tabs, topBar, webView);
 
+        beeBuzz(pane);
+
 
         Scene scene = new Scene(pane, 1000, 1000);
 
@@ -189,6 +191,22 @@ public class webView extends Application {
 
     private boolean isValidURL(String url) {
         return url.startsWith("https:");
+    }
+
+    // Bee animation at bottom of screen
+    private void beeBuzz(VBox pane) throws FileNotFoundException {
+        Image bee = new Image(new FileInputStream("img/bee.png"), 20, 15, true, true);
+        ImageView b = new ImageView(bee);
+        b.setFitHeight(50);
+        b.setFitWidth(50);
+        final Timeline timeline = new Timeline();
+        timeline.setCycleCount(2);
+        timeline.setAutoReverse(true);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(10),
+                new KeyValue(b.translateXProperty(), 1000)));
+        timeline.play();
+        pane.getChildren().add(b);
+        b.toFront();
     }
 
 }

@@ -1,2 +1,5 @@
 https://www.google.com
 https://www.apple.com
+https://www.ford.com
+https://www.cs.usu.edu/
+https://www.amazon.com

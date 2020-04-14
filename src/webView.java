@@ -2,11 +2,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -195,18 +198,37 @@ public class webView extends Application {
 
     // Bee animation at bottom of screen
     private void beeBuzz(VBox pane) throws FileNotFoundException {
-        Image bee = new Image(new FileInputStream("img/bee.png"), 20, 15, true, true);
-        ImageView b = new ImageView(bee);
-        b.setFitHeight(50);
-        b.setFitWidth(50);
-        final Timeline timeline = new Timeline();
-        timeline.setCycleCount(2);
-        timeline.setAutoReverse(true);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(10),
-                new KeyValue(b.translateXProperty(), 1000)));
-        timeline.play();
-        pane.getChildren().add(b);
-        b.toFront();
+        HBox anime = new HBox();
+        RadioButton rb = new RadioButton();
+        anime.getChildren().add(rb);
+
+        rb.setOnAction(e -> {
+            if (rb.isSelected()) {
+                Image bee = null;
+                try {
+                    bee = new Image(new FileInputStream("img/bee.png"), 20, 15, true, true);
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+                ImageView b = new ImageView(bee);
+                b.setFitHeight(50);
+                b.setFitWidth(50);
+                final Timeline timeline = new Timeline();
+                timeline.setCycleCount(2);
+                timeline.setAutoReverse(true);
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(10),
+                        new KeyValue(b.translateXProperty(), 1000)));
+                timeline.play();
+                anime.getChildren().addAll(b);
+
+                b.toFront();
+            }
+            else {
+                rb.fire();
+            }
+
+        });
+        pane.getChildren().add(anime);
     }
 
 }

@@ -2,10 +2,9 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -34,7 +33,7 @@ public class webView extends Application {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     // Website the program loads to when starting up
-    final String defaultURL = "https://www.cs.usu.edu/";
+    final String defaultURL = "https://www.google.com";
 
     // current URL
     TextField URL = new TextField(defaultURL);
@@ -45,7 +44,7 @@ public class webView extends Application {
         WebView webView = new WebView();
         webView.setPrefHeight(screenSize.getHeight());
 
-        URLsVisited.add("https://www.cs.usu.edu/");
+        URLsVisited.add(defaultURL);
         WebEngine webEngine = webView.getEngine();
         webEngine.load(defaultURL);
 
@@ -182,8 +181,6 @@ public class webView extends Application {
         pane.setAlignment(Pos.TOP_LEFT);
         pane.getChildren().addAll(tabs, topBar, webView);
 
-        beeBuzz(pane);
-
 
         Scene scene = new Scene(pane, 1000, 1000);
 
@@ -196,39 +193,6 @@ public class webView extends Application {
         return url.startsWith("https:");
     }
 
-    // Bee animation at bottom of screen
-    private void beeBuzz(VBox pane) throws FileNotFoundException {
-        HBox anime = new HBox();
-        RadioButton rb = new RadioButton();
-        anime.getChildren().add(rb);
 
-        rb.setOnAction(e -> {
-            if (rb.isSelected()) {
-                Image bee = null;
-                try {
-                    bee = new Image(new FileInputStream("img/bee.png"), 20, 15, true, true);
-                } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
-                }
-                ImageView b = new ImageView(bee);
-                b.setFitHeight(50);
-                b.setFitWidth(50);
-                final Timeline timeline = new Timeline();
-                timeline.setCycleCount(2);
-                timeline.setAutoReverse(true);
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(10),
-                        new KeyValue(b.translateXProperty(), 1000)));
-                timeline.play();
-                anime.getChildren().addAll(b);
-
-                b.toFront();
-            }
-            else {
-                rb.fire();
-            }
-
-        });
-        pane.getChildren().add(anime);
-    }
 
 }
